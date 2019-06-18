@@ -1,0 +1,7 @@
+<div class="test-word">
+  <ng-container *ngFor="let item of viewWord">
+    <a (click)="inspection(item, $event)">{{item}}</a>
+  </ng-container>
+  <span class="badge-true" *ngIf="visibleCorrectly && correct">Правильно!</span>
+  <span class="badge-false" *ngIf="visibleWrong && !correct">Неправильно</span>
+</div>

@@ -1,3 +1,36 @@
-<p>
-  challenge works!
-</p>
+<div class="container-challenge" *ngIf="currentLetter">
+  <div class="view-wrapper">
+    <p #marginElement
+      [ngClass]="currentLetter.vowel ? 'letter-vowel' : 'letter-consonant'">
+      {{currentLetter.letter}}
+    </p>
+    <div class="img-word-wrapper">
+      <img class="img-responsive" src="{{currentLetter.imagePath}}" alt="image"/>
+      <div class="image-name">
+        <ng-container *ngFor="let letter of currentLetter.imageName.split('')">
+          <a *ngIf="isColorElement(letter)" #colorElement>{{letter}}</a>
+          <a *ngIf="isNotColorElement(letter)">{{letter}}</a>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-wrapper" *ngIf="currentLetter">
+    Найдите (кликните) букву
+    <span [ngClass]="currentLetter.vowel ? 'letter-vowel' : 'letter-consonant'">
+      {{currentLetter.param}}
+    </span> в слове:
+    <app-test-word [model]="currentLetter"></app-test-word>
+  </div>
+  <div class="letters-wrapper">
+    <ng-container *ngFor="let item of items">
+      <div [ngClass]="item.vowel ? 'letter-vowel' : 'letter-consonant'"
+           class="letter-element">
+        <div routerLink="/challenge/{{item.param}}"
+             [ngClass]="item.param === currentLetter.param ? 'active-letter' : ''">
+          {{item.letter}}
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
