@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlphabetService } from '../../services/alphabet/alphabet.service';
 import { AlphabetModel } from '../../models/alphabet/alphabet.model';
@@ -8,13 +8,11 @@ import { AlphabetModel } from '../../models/alphabet/alphabet.model';
   templateUrl: './challenge.component.html',
   styleUrls: ['./challenge.component.sass']
 })
-export class ChallengeComponent implements OnInit, AfterViewChecked {
+export class ChallengeComponent implements OnInit, AfterViewInit {
   items: AlphabetModel[];
   currentLetter: AlphabetModel;
-  anomalyLetter: string[] = ['м', 'ж', 'ф', 'ш', 'щ', 'ъ', 'ы', 'ю'];
 
-  @ViewChild('colorElement') colorElement: ElementRef;
-  @ViewChild('marginElement') marginElement: ElementRef;
+  @ViewChild('resize') resize: ElementRef;
 
   constructor(
     private alphabet: AlphabetService,
@@ -37,6 +35,10 @@ export class ChallengeComponent implements OnInit, AfterViewChecked {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.styleToSize(window.innerWidth, window.innerHeight);
+  }
+
   isColorElement(letter: string): boolean {
     return letter.toUpperCase() === this.currentLetter.param.toUpperCase();
   }
@@ -45,18 +47,19 @@ export class ChallengeComponent implements OnInit, AfterViewChecked {
     return letter.toUpperCase() !== this.currentLetter.param.toUpperCase();
   }
 
-  ngAfterViewChecked(): void {
-    if (this.anomalyLetter.includes(this.currentLetter.param)) {
-      this.renderer.setStyle(this.marginElement.nativeElement, 'margin', '0.2em 0.08em 0 0');
-    } else {
-      this.renderer.setStyle(this.marginElement.nativeElement, 'margin', '0.2em 0.5em 0 0');
-    }
+  @HostListener('window:resize', ['$event'])
+  private onResize(event) {
+    this.renderer.removeStyle(this.resize.nativeElement, 'font-size');
+    this.styleToSize(window.innerWidth, window.innerHeight);
+  }
 
-    if (this.currentLetter && this.colorElement.nativeElement.text.toUpperCase() === this.currentLetter.param.toUpperCase()) {
-      if (this.currentLetter.vowel) {
-        this.renderer.addClass(this.colorElement.nativeElement, 'letter-vowel');
-      } else {
-        this.renderer.addClass(this.colorElement.nativeElement, 'letter-consonant');
+  styleToSize(width, height) {
+    if (width > height) {
+      if (width < 1024) {
+        this.renderer.setStyle(this.resize.nativeElement, 'font-size', '14px');
+      }
+      if (width < 600) {
+        this.renderer.setStyle(this.resize.nativeElement, 'font-size', '12px');
       }
     }
   }

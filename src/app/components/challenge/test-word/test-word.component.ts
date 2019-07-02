@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, OnInit, Renderer2 } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { AlphabetModel } from '../../../models/alphabet/alphabet.model';
 
 @Component({
@@ -13,7 +12,7 @@ export class TestWordComponent implements OnInit, OnChanges {
   visibleCorrectly = false;
   visibleWrong = false;
   correct = false;
-  event: BehaviorSubject<MouseEvent> = new BehaviorSubject(null);
+  event: MouseEvent;
 
   constructor(
     private renderer: Renderer2
@@ -23,9 +22,10 @@ export class TestWordComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (typeof this.event.getValue() === 'object' && this.event.getValue() !== null) {
-      this.renderer.removeClass(this.event.getValue().target, 'letter-vowel');
-      this.renderer.removeClass(this.event.getValue().target, 'letter-consonant');
+    if (this.event && typeof this.event === 'object') {
+      this.renderer.removeClass(this.event.target, 'letter-vowel');
+      this.renderer.removeClass(this.event.target, 'letter-consonant');
+      this.event = undefined;
     }
     this.init();
     this.visibleCorrectly = false;
@@ -38,9 +38,9 @@ export class TestWordComponent implements OnInit, OnChanges {
     this.viewWord = word.split('');
   }
 
-  inspection(letter: string, event: MouseEvent): void {
+  onInspection(letter: string, event: MouseEvent): void {
     if (this.model.param === letter) {
-      this.event.next(event);
+      this.event = event;
 
       this.visibleCorrectly = true;
       this.correct = true;

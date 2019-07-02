@@ -1,14 +1,17 @@
-<div class="container-challenge" *ngIf="currentLetter">
+<div class="container-challenge" *ngIf="currentLetter" #resize>
   <div class="view-wrapper">
-    <p #marginElement
-      [ngClass]="currentLetter.vowel ? 'letter-vowel' : 'letter-consonant'">
-      {{currentLetter.letter}}
-    </p>
+    <span [ngClass]="{
+      'letter-vowel': currentLetter.vowel,
+      'letter-consonant': !currentLetter.vowel
+      }" class="letter-margin"
+    >{{currentLetter.letter}}</span>
     <div class="img-word-wrapper">
       <img class="img-responsive" src="{{currentLetter.imagePath}}" alt="image"/>
       <div class="image-name">
         <ng-container *ngFor="let letter of currentLetter.imageName.split('')">
-          <a *ngIf="isColorElement(letter)" #colorElement>{{letter}}</a>
+          <a *ngIf="isColorElement(letter)"
+             [ngClass]="currentLetter.vowel ? 'letter-vowel' : 'letter-consonant'"
+          >{{letter}}</a>
           <a *ngIf="isNotColorElement(letter)">{{letter}}</a>
         </ng-container>
       </div>
